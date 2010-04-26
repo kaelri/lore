@@ -1,0 +1,1 @@
+<center><span class="big"><h3><b>Blank</b></h3></span><a href="index.php">Home</a> » <a href="about.php">About</a> » <a href="about.php?p=blank">Blank</a></center>

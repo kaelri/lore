@@ -1,0 +1,16 @@
+<?php
+if($_POST['pass']){
+	if($_SESSION['uid']){
+		$pass=$_POST['pass'];
+		$sig=$_POST['sig'];
+		$icon=$_POST['icon'];
+		$icon="/images/icons/$icon";
+		$uid=$_SESSION['uid'];
+		$options_x="UPDATE users SET password='$pass',sig='$sig',icon='$icon' where uid='$uid'";
+		$options_y=mysql_db_query(LORE_DB_NAME,$options_x,$connect);
+		if($options_y){
+			die("<html><head><META CONTENT=\"1;URL=index.php?e=options0\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">");
+		}
+	} else { die("<html><head><META CONTENT=\"1;URL=index.php?e=options1nouid\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">"); }
+} else{ die("<html><head><META CONTENT=\"1;URL=index.php\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">"); }
+?>

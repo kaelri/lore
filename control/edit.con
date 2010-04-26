@@ -1,0 +1,23 @@
+<?php
+if($_POST['pid']){
+	if($_SESSION['uid']){
+		$uid=$_SESSION['uid'];
+		$pid=$_POST['pid'];
+		$tid=$_POST['tid'];
+		$title=$_POST['title'];
+		$message=$_POST['message'];
+		$ruid_x="SELECT author FROM posts WHERE pid='$pid'";
+		$ruid_y=mysql_db_query(LORE_DB_NAME,$ruid_x,$connect);
+		while($ruid_z=mysql_fetch_array($ruid_y)){
+			$ruid=$ruid_z['author'];
+		}
+		if($uid == $ruid || $uid == "1" || $uid == "2" || $uid == "3" || $uid == "4"){
+			$edit_x="UPDATE posts SET name='$title',edited='T',message='$message' WHERE pid='$pid'";
+			$edit_y=mysql_db_query(LORE_DB_NAME,$edit_x,$connect);
+			if($edit_y){
+				die("<html><head><META CONTENT=\"1;URL=thread.php?t=$tid&ep=$pid#$pid\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">&nbsp</body></html>");
+			}
+		} else { die("<html><head><META CONTENT=\"1;URL=thread.php?t=$tid&e=edit1baduid\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">&nbsp</body></html>"); }
+	} else { die("<html><head><META CONTENT=\"1;URL=thread.php?t=$tid&e=edit2nouid\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">&nbsp</body></html>"); }
+} else { die("<html><head><META CONTENT=\"1;URL=index.php\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">&nbsp</body></html>"); }
+?>

@@ -1,0 +1,13 @@
+<?php
+if($_POST['notepad']){
+	if($_SESSION['uid']){
+		$notepad=$_POST['notepad'];
+		$uid=$_SESSION['uid'];
+		$notepad_x="UPDATE users SET notepad='$notepad' where uid='$uid'";
+		$notepad_y=mysql_db_query(LORE_DB_NAME,$notepad_x,$connect);
+		if($notepad_y){
+			die("<html><head><META CONTENT=\"1;URL=index.php?e=notepad0\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">");
+		}
+	} else { die("<html><head><META CONTENT=\"1;URL=index.php?e=notepad1nouid\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">"); }
+} else { die("<html><head><META CONTENT=\"1;URL=index.php\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">"); }
+?>

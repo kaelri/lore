@@ -1,0 +1,61 @@
+<?php
+if($_POST['title']){
+	if($_SESSION['uid']){
+		$uid=$_SESSION['uid'];
+		$title=$_POST['title'];
+		$message=$_POST['message'];
+		$sticky=$_POST['sticky'];
+		$locked=$_POST['locked'];
+		$aid=$_POST['aid'];
+		$security_x="SELECT * FROM realms WHERE aid='$aid'";
+		$security_y=mysql_db_query(LORE_DB_NAME,$security_x,$connect);
+		while($security_z=mysql_fetch_array($security_y)){
+			$rview=$security_z['view'];
+			if($rview=="T"){
+				$ucolumn="r"."$aid";
+				$uauth_x="SELECT $ucolumn FROM users WHERE uid='$uid'";
+				$uauth_y=mysql_db_query(LORE_DB_NAME,$uauth_x,$connect);
+				while($uauth_z=mysql_fetch_array($uauth_y)){
+					$uauth=$uauth_z['0'];
+				}
+				if($uauth=="F"){
+					die("<html><head><META CONTENT=\"1;URL=index.php?e=forum1denied\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">&nbsp</body></html>");
+				}
+			}
+		}
+		if($sticky == "sticky" && ($uid == "1" || $uid == "2" || $uid == "3" || $uid == "4")){
+			$sticky="T";
+		}
+		else{
+			$sticky="F";
+		}
+		if($locked == "locked" && ($uid == "1" || $uid == "2" || $uid == "3" || $uid == "4")){
+			$locked="T";
+		}
+		else{
+			$locked="F";
+		}
+		$date=date("Y-m-d H:i:s");
+		$newthread_x="INSERT INTO topics VALUES (NULL, '$sticky', 'F', '0', '$aid', '$date', '$locked', 'F', '0')";
+		$newthread_y=mysql_db_query(LORE_DB_NAME,$newthread_x,$connect);
+		$tid_x="SELECT tid FROM topics ORDER BY last_post_scan DESC LIMIT 1";
+		$tid_y=mysql_db_query(LORE_DB_NAME,$tid_x,$connect);
+		while($tid_z=mysql_fetch_array($tid_y)){
+			$tid=$tid_z['tid'];
+		}
+		$postcount_x="SELECT posts FROM users WHERE uid='$uid'";
+		$postcount_y=mysql_db_query(LORE_DB_NAME,$postcount_x,$connect);
+		while($postcount_z=mysql_fetch_array($postcount_y)){
+			$posts=$postcount_z['posts'];
+		}
+		$posts=$posts+1;
+		$postcount2_x="UPDATE users SET posts='$posts' WHERE uid='$uid'";
+		$postcount2_y=mysql_db_query(LORE_DB_NAME,$postcount2_x,$connect);
+		$newpost_x="INSERT INTO posts VALUES (NULL, '$title', '$uid', 'F', '$tid', '$date', '$message', 'T', 'F')";
+		$newpost_y=mysql_db_query(LORE_DB_NAME,$newpost_x,$connect);
+		if($newthread_y && $postcount2_y && $newpost_y){
+			die("<html><head><META CONTENT=\"1;URL=thread.php?t=$tid\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">&nbsp</body></html>");
+		}	
+	} else { die("<html><head><META CONTENT=\"1;URL=forum.php?f=$aid&e=newthread1nouid\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">"); }
+} else { die("<html><head><META CONTENT=\"1;URL=index.php\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">"); }
+?>

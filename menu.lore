@@ -1,0 +1,7 @@
+<img src="images/menu1.jpg"><br>
+<a href="index.php">Home</a><br>
+<a href="people.php">People</a><br>
+<a href="about.php">About</a><br><br>
+<img src="images/menu2.jpg"><br>
+<a href="/index.php">Lore</a><br>
+<a href="/wiki/index.php">FATE</a>

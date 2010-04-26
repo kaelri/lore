@@ -1,0 +1,40 @@
+<style type="text/css">
+.standard {font-size: 10pt; color: #FFFFFF; font-family: Verdana, Arial, "sans-serif"}
+.big {font-size: 12pt; color: #FFFFFF; font-family: Verdana, Arial, "sans-serif"}
+.small {font-size: 7pt; color: #FFFFFF; font-family: Verdana, Arial, "sans-serif"}
+.menu {color: #80C0FF; font-family: Bradley Hand ITC, "times", "serif"}
+.input {font-size: 8pt}
+A:link {text-decoration: none;color:#80C0FF;}
+A:active {text-decoration: none;color:#990000;}
+A:visited {text-decoration: none;color:#80C0FF;}
+A:hover {text-decoration: underline;color:#80FFFF;}
+</style>
+
+<script language="JavaScript">
+function initialise() {
+ var element = document.getElementById('element-id');
+  if (element && element.style)
+    element.style.display = 'none';
+}
+function toggleDisplay(element) {
+  var style;
+  if (typeof element == 'string')
+    element = document.getElementById(element);
+  if (element && (style = element.style))
+      style.display = (style.display == 'none') ? '' : 'none';
+  }
+  if (!document.getElementById)
+  document.getElementById = function() {
+    return null;
+};
+function focus_input( e )
+{
+	if ( e.value == "Name" || e.value == "------" )
+	{
+		e.value = '';
+		return false;
+	}
+}
+</script>
+
+<link rel="icon" type="image/png" href="images/favicon.png">

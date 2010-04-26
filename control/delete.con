@@ -1,0 +1,44 @@
+<?php
+if($_GET['p']){
+	if($_SESSION['uid']){
+		$pid=$_GET['p'];
+		$uid=$_SESSION['uid'];
+		$post_x="SELECT author,tid FROM posts WHERE pid='$pid'";
+		$post_y=mysql_db_query(LORE_DB_NAME,$post_x,$connect);
+		while($post_z=mysql_fetch_array($post_y)){
+			$pauthor=$post_z['author'];
+			$tid=$post_z['tid'];
+		}
+		$thread_x="SELECT realm,replies FROM topics WHERE tid='$tid'";
+		$thread_y=mysql_db_query(LORE_DB_NAME,$thread_x,$connect);
+		while($thread_z=mysql_fetch_array($thread_y)){
+			$aid=$thread_z['realm'];
+			$replies=$thread_z['replies'];
+		}
+		$threadpost_x="SELECT pid FROM posts WHERE tid='$tid' && visible='T' ORDER BY date ASC LIMIT 1";
+		$threadpost_y=mysql_db_query(LORE_DB_NAME,$threadpost_x,$connect);
+		while($threadpost_z=mysql_fetch_array($threadpost_y)){
+			$fpid=$threadpost_z['pid'];
+		}
+		if($uid == $pauthor || $uid == "1" || $uid == "2" || $uid == "3" || $uid == "4"){
+			if($pid == $fpid){
+				$deletethread_x="DELETE FROM topics WHERE tid='$tid'";
+				$deletethread_y=mysql_db_query(LORE_DB_NAME,$deletethread_x,$connect);
+			}
+			else{
+				$replies=$replies-1;
+				$postcount_x="UPDATE topics SET replies='$replies' where tid='$tid'";
+				$postcount_y=mysql_db_query(LORE_DB_NAME,$postcount_x,$connect);
+			}
+			$deletepost_x="UPDATE posts SET visible='F' WHERE pid='$pid'";
+			$deletepost_y=mysql_db_query(LORE_DB_NAME,$deletepost_x,$connect);
+			if($deletethread_y && deletepost_y){
+				die("<html><head><META CONTENT=\"1;URL=forum.php?f=$aid&e=delete0a\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">&nbsp</body></html>");
+			}
+			if($postcount_y && $deletepost_y){
+				die("<html><head><META CONTENT=\"1;URL=thread.php?t=$tid&e=delete0b\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">&nbsp</body></html>");
+			}
+		} else { die("<html><head><META CONTENT=\"1;URL=thread.php?t=$tid&e=delete1baduid\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">&nbsp</body></html>"); }
+	} else { die("<html><head><META CONTENT=\"1;URL=thread.php?t=$tid&e=delete2nouid\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">&nbsp</body></html>"); }
+} else { die("<html><head><META CONTENT=\"1;URL=index.php\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">&nbsp</body></html>"); }
+?>

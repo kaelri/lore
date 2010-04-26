@@ -1,0 +1,68 @@
+<?php
+if($_POST['title']){
+	if($_SESSION['uid']){
+		$uid=$_SESSION['uid'];
+		$message=$_POST['message'];
+		$stickify=$_POST['sticky'];
+		$lockify=$_POST['locked'];
+		$aid=$_POST['aid'];
+		$tid=$_POST['tid'];
+		$title=$_POST['title'];
+		$security_x="SELECT * FROM realms WHERE aid='$aid'";
+		$security_y=mysql_db_query(LORE_DB_NAME,$security_x,$connect);
+		while($security_z=mysql_fetch_array($security_y)){
+			$rview=$security_z['view'];
+			if($rview=="T"){
+				$ucolumn="r"."$aid";
+				$uauth_x="SELECT $ucolumn FROM users WHERE uid='$uid'";
+				$uauth_y=mysql_db_query(LORE_DB_NAME,$uauth_x,$connect);
+				while($uauth_z=mysql_fetch_array($uauth_y)){
+					$uauth=$uauth_z['0'];
+				}
+				if($uauth=="F"){
+					die("<html><head><META CONTENT=\"1;URL=index.php?e=forum1denied\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">&nbsp</body></html>");
+				}
+			}
+		}
+		$thread_x="SELECT locked,replies FROM topics WHERE tid='$tid'";
+		$thread_y=mysql_db_query(LORE_DB_NAME,$thread_x,$connect);
+		while($thread_z=mysql_fetch_array($thread_y)){
+			$locked=$thread_z['locked'];
+			$replies=$thread_z['replies'];
+		}
+		if($locked){
+			if($locked == "F" || $uid == "1" || $uid == "2" || $uid == "3" || $uid == "4"){
+				if($stickify == "sticky" && ($uid == "1" || $uid == "2" || $uid == "3" || $uid == "4")){
+					$stickify="T";
+				}
+				else{
+					$stickify="F";
+				}
+				if($lockify == "locked" && ($uid == "1" || $uid == "2" || $uid == "3" || $uid == "4")){
+					$lockify="T";
+				}
+				else{
+					$lockify="F";
+				}
+				$date=date("Y-m-d H:i:s");
+				$postcount_x="SELECT posts FROM users WHERE uid='$uid'";
+				$postcount_y=mysql_db_query(LORE_DB_NAME,$postcount_x,$connect);
+				while($postcount_z=mysql_fetch_array($postcount_y)){
+					$posts=$postcount_z['posts'];
+				}
+				$posts=$posts+1;
+				$postcount2_x="UPDATE users SET posts='$posts' WHERE uid='$uid'";
+				$postcount2_y=mysql_db_query(LORE_DB_NAME,$postcount2_x,$connect);
+				$replies=$replies+1;
+				$replycount_x="UPDATE topics SET replies='$replies',last_post_scan='$date',locked='$lockify',sticky='$stickify' WHERE tid='$tid'";
+				$replycount_y=mysql_db_query(LORE_DB_NAME,$replycount_x,$connect);
+				$newpost_x="INSERT INTO posts VALUES (NULL, '$title', '$uid', 'F', '$tid', '$date', '$message', 'T', 'F')";
+				$newpost_y=mysql_db_query(LORE_DB_NAME,$newpost_x,$connect);
+				if($postcount2_y && $replycount_y && $newpost_y){
+					die("<html><head><META CONTENT=\"1;URL=thread.php?t=$tid#bottom\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">&nbsp</body></html>");
+				}
+			} else { die("<html><head><META CONTENT=\"1;URL=thread.php?t=$tid&e=reply1locked\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">&nbsp</body></html>"); }
+		} else { die("<html><head><META CONTENT=\"1;URL=forum.php?f=$aid&e=reply2notid\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">&nbsp</body></html>"); }
+	} else { die("<html><head><META CONTENT=\"1;URL=thread.php?t=$tid&e=reply3nouid\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">&nbsp</body></html>"); }
+} else { die("<html><head><META CONTENT=\"1;URL=index.php\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">&nbsp</body></html>"); }
+?>

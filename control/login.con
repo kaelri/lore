@@ -1,0 +1,51 @@
+<?php
+if($_POST['name']){
+	if($_POST['pass']){
+	    $name=$_POST['name'];
+		$pass=$_POST['pass'];
+		$url=$_POST['url'];
+		$ip=$_SERVER['REMOTE_ADDR'];
+		$confirm_x="SELECT * FROM users WHERE name='$name'";
+		$confirm_y=mysql_db_query(LORE_DB_NAME,$confirm_x,$connect);
+		while($confirm_z=mysql_fetch_array($confirm_y)){
+			$uid=$confirm_z['uid'];
+			$rpass=$confirm_z['password'];
+		}
+		if($uid){
+			if($pass==$rpass){
+				$iplast_x="SELECT * FROM profiles WHERE uid='$uid'";
+				$iplast_y=mysql_db_query(LORE_DB_NAME,$iplast_x,$connect);
+				while($iplast_z=mysql_fetch_array($iplast_y)){
+					$iplast=$iplast_z['last_ip'];
+				}
+				$ipold_x="SELECT * FROM ips WHERE ip='$ip'";
+				$ipold_y=mysql_db_query(LORE_DB_NAME,$ipold_x,$connect);
+				while($ipold_z=mysql_fetch_array($ipold_y)){
+					$ipold=$ipold_z['ip'];
+				}
+				if(!($ipold)){
+					$newip_x="INSERT INTO ips VALUES (null,'$ip','F')";
+					$newip_y=mysql_db_query(LORE_DB_NAME,$newip_x,$connect);
+					if($newip_y){
+					}
+				}
+				else{
+					$banned_x="SELECT * FROM ips WHERE ip='$iplast'";
+					$banned_y=mysql_db_query(LORE_DB_NAME,$banned_x,$connect);
+					while($banned_z=mysql_fetch_array($banned_y)){
+						if($banned_z['banned']=="T"){
+							die("<html><head><META CONTENT=\"1;URL=index.php?e=login1banned\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">");
+						}
+					}
+				}
+				$login_x="UPDATE profiles SET last_ip='$ip' WHERE uid='$uid'";
+				$login_y=mysql_db_query(LORE_DB_NAME,$login_x,$connect);
+				if($login_y){
+					$_SESSION['uid']=$uid;
+					die("<html><head><META CONTENT=\"1;URL=$url\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">");
+				}
+			} else{ die("<html><head><META CONTENT=\"1;URL=index.php?e=login2badpass\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">"); }
+		} else{ die("<html><head><META CONTENT=\"1;URL=index.php?e=login3badname\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">"); }
+	} else{ die("<html><head><META CONTENT=\"1;URL=index.php?e=login4nopass\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">"); }
+} else{ die("<html><head><META CONTENT=\"1;URL=index.php?e=login5noname\" HTTP-EQUIV=\"REFRESH\"></head><body bgcolor=\"#000000\">"); }
+?>

@@ -1,0 +1,32 @@
+<table width="100%"><tr>
+ <td><span class="small"><?php echo date("l - j F, Y - g.i.s A"); ?> <span title="GMT -5">EST</span></span>
+ <td align=right><span class="small">
+  <?php
+   if($_SESSION['uid']){
+    $uid=$_SESSION['uid'];
+    $connect=mysql_connect(LORE_DB_HOST,LORE_DB_USER,LORE_DB_PASS);
+    $login_x="SELECT * FROM users WHERE uid='$uid'";
+    $login_y=mysql_db_query(LORE_DB_NAME,$login_x,$connect);
+    while($login_z=mysql_fetch_array($login_y)){
+     $name=$login_z['name'];
+     $ranking=$login_z['ranking'];
+    }
+    $new="0";
+    $pms_x="SELECT * FROM personal_m WHERE recipiant='$uid' && viewed='F'";
+    $pms_y=mysql_db_query(LORE_DB_NAME,$pms_x,$connect);
+    while($pms_z=mysql_fetch_array($pms_y)){
+     $new=$new+1;
+    }
+
+    $rankname_x="SELECT name FROM ranking WHERE rid='$ranking'";
+    $rankname_y=mysql_db_query(LORE_DB_NAME,$rankname_x,$connect);
+    while($rankname_z=mysql_fetch_array($rankname_y)){
+     $ranking=$rankname_z['name'];
+    }
+    print("Welcome, $name. - <a href=\"pm.php\">$new new PMs.</a> - <a href=\"control.php?c=logout&url=$url\">Logout</a>");
+   }else{
+    print("<div id=\"welcome\">Welcome. - <a href=\"reg.php\">Register</a> - <a href=\"#\" onclick=\"toggleDisplay('login');toggleDisplay('welcome');\">Login</a></div>");
+	print("<div id=\"login\" style=\"display:none;\"><form action=\"control.php?c=login\" method=\"post\"><input type=\"text\" class=\"input\" size=20 name=\"name\" value=\"Name\" onfocus=\"focus_input(this)\"> <input type=\"password\" size=20 class=\"input\" name=\"pass\" value=\"------\" onfocus=\"focus_input(this)\"> <input type=\"hidden\" name=\"url\" value=\"$url\"><input type=\"submit\" class=\"input\" value=\"Login\"> <input type=\"button\" class=\"input\" value=\"Cancel\" onclick=\"toggleDisplay('login');toggleDisplay('welcome');\"></form></div>");
+   }
+   ?>
+</table>
